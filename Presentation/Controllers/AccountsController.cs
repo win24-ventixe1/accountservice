@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Presentation.Models;
 using Presentation.Services;
 
 namespace Presentation.Controllers;
@@ -13,5 +14,15 @@ public class AccountsController : ControllerBase
     {
         _accountService = accountService;
     }
-}
 
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    {
+        var token = await _accountService.LoginAsync(model.Email, model.Password);
+
+        if (token == null)
+            return Unauthorized("Invalid email or password.");
+
+        return Ok(new { token });
+    }
+}
