@@ -22,20 +22,20 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 }).AddEntityFrameworkStores<DataContext>()
   .AddDefaultTokenProviders();
 
-// JWT Authentication
+// Använder "Bearer" (JWT) som inloggningsmetod.
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateIssuer = true, // Kontroll rätt källa.
+            ValidateAudience = true, // Kontroll rätt mottagare.
+            ValidateLifetime = true, //Kontroll att token är i datum.
+            ValidateIssuerSigningKey = true, // Kontroll att token är rätt signad.
+            ValidIssuer = builder.Configuration["Jwt:Issuer"], // Vem skickade token.
+            ValidAudience = builder.Configuration["Jwt:Audience"], // Vem är mottagare av token.
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)) // Säkerhetsnyckel för kontroll av signeringen.
         };
     });
 

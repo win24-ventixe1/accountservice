@@ -41,17 +41,23 @@ public class AccountService : IAccountService
         return GenerateJwtToken(user);
     }
 
+    // Detta är taget från ChatGpt.
     private string GenerateJwtToken(IdentityUser user)
     {
         var claims = new[]
         {
+            // Läggeer till användarens e-post.
             new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
+
+            // Lägger till ett unikt ID för token.
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
+        // Skapar en hemlig nyckel som används för att signera JWT:n (måste matcha i backend-konfigurationen).
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        // Skapar token med all info.
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
